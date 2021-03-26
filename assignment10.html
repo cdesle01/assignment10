@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>API Fun!</title>
+    
+    
+    
+    <script>
+        function weather()
+        {
+            //creates an AJAX element that can send and receive data from 
+            //a web server
+            request = new XMLHttpRequest();
+            console.log("1 - request object created");
+            
+            //send request to get data from the web server
+            request.open("GET", 
+            "http://api.airvisual.com/v2/nearest_city?key=d0b8c570-8e20-4d1c-a941-1d4bfca9ff3a", 
+            true);
+            console.log("2 - opened request file");
+            //runs when the state changes
+            request.onreadystatechange = function() 
+            {
+                //if the operation is complete and the status is complete
+                if (request.readyState == 4 && request.status == 200)
+                {
+                    console.log("5 - response received");
+                    //gets the data
+                    result = request.responseText;
+                    //writing the raw data
+                    document.getElementById("data").innerHTML = result 
+                    + "<br/><br/>";
+                    //putting the data back into the object
+                    weather = JSON.parse(result);
+                    
+                    //formatting the data into a readable format 
+                    
+                    document.getElementById("title").innerHTML += 
+                    weather.data.city + ", " + weather.data.state +
+                        ", " + weather.data.country + "<br/><br/>";
+                    celsius = weather.data.current.weather.tp;
+                    document.getElementById("weather").innerHTML += 
+                        "Temperature in Celcius: " + celsius + "<br/>";
+                    fahrenheit = celsius*(9/5) + 32;
+                    document.getElementById("weather").innerHTML += 
+                        "Temperature in Fahrenheit: " + fahrenheit + "<br/>";
+                    humidity = weather.data.current.weather.hu;
+                    document.getElementById("weather").innerHTML += 
+                        "Humidity: " + humidity + "%<br/>";
+                    wind = weather.data.current.weather.ws;
+                    document.getElementById("weather").innerHTML += 
+                        "Wind Speed: " + wind + " m/s<br/>";
+                    aqi = weather.data.current.pollution.aqius;
+                    document.getElementById("weather").innerHTML += 
+                        "Air Quality Index: " + aqi + "<br/><br/>";
+                }
+                //request status is not yet ready
+                else if (request.readyState == 4 && request.status != 200) {
+                    
+                    document.getElementById("data").innerHTML = "Something " +
+                        "is wrong!  Check the logs to see where this went off "
+                        + "the rails";
+                    
+                }
+                //request state is not yet ready
+                else if (request.readyState == 3) {
+                    
+                    document.getElementById("data").innerHTML = "Too soon!" +
+                        "Try again";
+                    
+                }
+            }
+            // sending the request for the data from the web server 
+            request.send();
+            console.log("4 - Request sent");
+        }
+        
+        
+    </script>
+</head>
+
+
+<body onload = "weather()">
+    
+    <!-- formatting the data -->
+    <div id="title">Current Weather in </div>
+    <div id="data"></div>
+    <div id="weather"></div>
+    
+    <div id="description">The API I selected describes historical, current, and 
+        forecasted weather and air quality conditions in different locations 
+        around the world.</div>
+        
+        <div id="website">https://www.iqair.com/air-pollution-data-api</div>
+        
+        <div id="options">I created a new XMLHttpRequest in order to be able to 
+        send and receive data from a web server. From there i used open() to 
+        create a request to access the data from the given web server. Then 
+        using send(), I sent a request to the web server to access the data 
+        from the API. I then had to ensure that the request had been completed
+        successfully before I attempted to access the data.</div>
+        
+        <div id="apps">One application where this API would be helpful would be for 
+            areas affected by wildfires or high air pollution so people know the 
+            air quality index and can see if it is safe for them to go outside. 
+            Also this API provides the current weather conditions so this would also 
+            be helpful on a hotel's website so tourists know the historical, 
+            current, and forecasted temperatures when planning a trip.</div>
+            
+        </body>
+        </html>
